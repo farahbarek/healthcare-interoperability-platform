@@ -1,0 +1,189 @@
+@baseUrl = http://localhost:8000
+@username = farah
+@password = SecurePassword123!
+@token = 
+
+### ═══════════════════════════════════════════════════════════════════════
+### 🔐 AUTHENTIFICATION - OBTENIR LE TOKEN
+### ═══════════════════════════════════════════════════════════════════════
+
+### 1️⃣ Obtenir Access & Refresh Tokens (POST)
+POST {{baseUrl}}/api/token/
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+
+### ═══════════════════════════════════════════════════════════════════════
+### ♻️ RAFRAÎCHIR LE TOKEN
+### ═══════════════════════════════════════════════════════════════════════
+
+### 2️⃣ Rafraîchir quand ACCESS expire (optionnel)
+# POST {{baseUrl}}/api/token/refresh/
+# Content-Type: application/json
+# 
+# {
+#   "refresh": "{{token}}"
+# }
+
+
+### ═══════════════════════════════════════════════════════════════════════
+### 🏥 PATIENTS - OPÉRATIONS CRUD
+### ═══════════════════════════════════════════════════════════════════════
+
+### 3️⃣ Lister tous les patients
+GET {{baseUrl}}/api/patients/
+Authorization: Bearer {{token}}
+
+
+### 4️⃣ Créer un nouveau patient (FHIR format)
+POST {{baseUrl}}/api/patients/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "resourceType": "Patient",
+  "name": [
+    {
+      "family": "Martin",
+      "given": ["Jean"]
+    }
+  ],
+  "gender": "male",
+  "birthDate": "1975-08-20"
+}
+
+
+### 5️⃣ Récupérer les détails d'un patient (remplacer l'ID)
+GET {{baseUrl}}/api/patients/1/
+Authorization: Bearer {{token}}
+
+
+### 6️⃣ Modifier un patient
+PATCH {{baseUrl}}/api/patients/1/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "gender": "female"
+}
+
+
+### 7️⃣ Supprimer un patient
+# DELETE {{baseUrl}}/api/patients/1/
+# Authorization: Bearer {{token}}
+
+
+### ═══════════════════════════════════════════════════════════════════════
+### 📊 OBSERVATIONS - CONSTANTES VITALES
+### ═══════════════════════════════════════════════════════════════════════
+
+### 8️⃣ Lister toutes les observations
+GET {{baseUrl}}/api/observations/
+Authorization: Bearer {{token}}
+
+
+### 9️⃣ Créer une observation (glucose)
+POST {{baseUrl}}/api/observations/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "resourceType": "Observation",
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "2345-7",
+        "display": "Glucose"
+      }
+    ]
+  },
+  "subject": {
+    "reference": "Patient/1"
+  },
+  "effectiveDateTime": "2024-03-04T10:30:00Z",
+  "valueQuantity": {
+    "value": 145,
+    "unit": "mg/dL",
+    "system": "http://unitsofmeasure.org"
+  }
+}
+
+
+### 🔟 Créer une observation (tension artérielle)
+POST {{baseUrl}}/api/observations/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "resourceType": "Observation",
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "85354-9",
+        "display": "Blood Pressure"
+      }
+    ]
+  },
+  "subject": {
+    "reference": "Patient/1"
+  },
+  "effectiveDateTime": "2024-03-04T10:30:00Z",
+  "valueQuantity": {
+    "value": 130,
+    "unit": "mmHg"
+  }
+}
+
+
+### 1️⃣1️⃣ Observations d'un patient spécifique
+GET {{baseUrl}}/api/patients/1/observations/
+Authorization: Bearer {{token}}
+
+
+### ═══════════════════════════════════════════════════════════════════════
+### 📚 DOCUMENTATION API
+### ═══════════════════════════════════════════════════════════════════════
+
+### 1️⃣2️⃣ Schéma OpenAPI (JSON)
+GET {{baseUrl}}/api/schema/
+Authorization: Bearer {{token}}
+
+
+### ═══════════════════════════════════════════════════════════════════════
+### 👨‍💻 ADMIN PANEL
+### ═══════════════════════════════════════════════════════════════════════
+
+### 1️⃣3️⃣ Admin Panel (dans navigateur)
+# http://localhost:8000/admin/
+# Username: {{username}}
+# Password: {{password}}
+
+
+### ═══════════════════════════════════════════════════════════════════════
+### 🧪 SWAGGER UI (Interface Interactive)
+### ═══════════════════════════════════════════════════════════════════════
+
+### 1️⃣4️⃣ Swagger UI (dans navigateur)
+# http://localhost:8000/api/docs/
+# Cliquer "Authorize" et entrer le token
+
+
+### ═══════════════════════════════════════════════════════════════════════
+### 📝 INSTRUCTIONS D'UTILISATION
+### ═══════════════════════════════════════════════════════════════════════
+
+### 1️⃣ Installer l'extension VSCode "REST Client" par humao.rest-client
+### 2️⃣ Lancer le serveur: python manage.py runserver
+### 3️⃣ Exécuter la requête #1 pour obtenir le token
+### 4️⃣ Copier le token "access" de la réponse
+### 5️⃣ Modifier la variable "@token" ci-dessus avec le token reçu
+### 6️⃣ Exécuter les autres requêtes en cliquant "Send Request"
+
+### 💡 CONSEIL: Cliquer "Send Request" sur une requête pour l'exécuter
+###             Le résultat s'affiche dans un onglet adjacent
